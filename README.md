@@ -19,7 +19,7 @@ Examples
 
         sc http://soundcloud.com/you/favorites
 
- Download the blink-182 EP - Dogs Eating Dogs, add the appropriate album title, and place the songs on your desktop.
+ Download the blink-182 EP - Dogs Eating Dogs, add the appropriate album title (-A "Dogs Eating Dogs - EP"), and place the songs on your desktop (-o ~/Desktop).
  
         sc -o ~/Desktop -A "Dogs Eating Dogs - EP" https://soundcloud.com/blink-182/sets/dogs-eating-dogs-ep
 
