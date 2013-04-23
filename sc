@@ -165,7 +165,7 @@ case "$BASE_URL" in
 		fi
 			
 		if [ $SHOW_LINKS = FALSE ]; then
-			[ $HAS_EYED3 = FALSE ] && echo "Tip: $SCRIPT_NAME does not embed artwork without eyeD3 installed: http://eyed3.nicfit.net/"
+			[ $HAS_EYED3 = FALSE ] && echo "Warning: $SCRIPT_NAME does not embed id3 tags without eyeD3 installed: http://eyed3.nicfit.net/"
 			headsUpFunction
 		fi
 	
