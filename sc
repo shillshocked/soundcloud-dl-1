@@ -224,7 +224,7 @@ case "$BASE_URL" in
 				exit 1
 			fi
 
-			if [ "$SINGLE_SONG" ]; then
+			if [ "$SINGLE_SONG" ] && [ ! "$SET" ]; then
 				SONG_COUNT=1	
 			else
 				SONG_COUNT=$(echo "$SONG_URLS" | wc -l)

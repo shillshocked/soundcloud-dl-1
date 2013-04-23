@@ -19,9 +19,9 @@ Examples
 
         sc http://soundcloud.com/you/favorites
 
- Only download the top songs with a title containing "Dubstep" or "Rock" (-m "(Dubstep|Rock)"), and place the downloaded files in a folder called "DubRock" in your music directory.
+ Download the blink-182 EP - Dogs Eating Dogs, add the appropriate album title, and place the songs on your desktop.
  
-        sc -m "(Dubstep|Rock)" -o ~/Music/DubRock http://soundcloud.com/tracks
+        sc -o ~/Desktop -A "Dogs Eating Dogs - EP" https://soundcloud.com/blink-182/sets/dogs-eating-dogs-ep
 
  List the links (-l) of Addergebroed songs that are longer than three minutes (-T 00:03:00), but shorter than five minutes and thirty seconds (-t 00:05:30).
         
