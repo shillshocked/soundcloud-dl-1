@@ -32,7 +32,7 @@
       <section>
         <div id="title">
           <h1>sc</h1>
-          <p>advanced soundcloud music downloading tool</p>
+          <p>Advanced Soundcloud music downloading tool.</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/cadejscroggins">cadejscroggins</a></span>
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
@@ -61,9 +61,9 @@
 <pre><code>    sc http://soundcloud.com/you/favorites
 </code></pre>
 
-<p>Only download the top songs with a title containing "Dubstep" or "Rock" (-m "(Dubstep|Rock)"), and place the downloaded files in a folder called "DubRock" in your music directory.</p>
+<p>Download the blink-182 EP - Dogs Eating Dogs, add the appropriate album title (-A "Dogs Eating Dogs - EP"), and place the songs on your desktop (-o ~/Desktop).</p>
 
-<pre><code>    sc -m "(Dubstep|Rock)" -o ~/Music/DubRock http://soundcloud.com/tracks
+<pre><code>    sc -o ~/Desktop -A "Dogs Eating Dogs - EP" https://soundcloud.com/blink-182/sets/dogs-eating-dogs-ep
 </code></pre>
 
 <p>List the links (-l) of Addergebroed songs that are longer than three minutes (-T 00:03:00), but shorter than five minutes and thirty seconds (-t 00:05:30).</p>
