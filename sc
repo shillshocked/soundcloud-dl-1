@@ -182,8 +182,8 @@ case "$BASE_URL" in
 			FIRST_PAGE_NUM=1
 		fi
 		
-		SINGLE_SONG="$(echo "$SOURCE" | grep "info-header large" | grep -v "class=\"set")"
-		SET="$(echo "$ORIGINAL_PAGE" | grep -E "/sets/.+")"
+		SINGLE_SONG="$(echo "$SOURCE" | grep "info-header large" | grep -v "class=\"type")"
+		SET="$(echo "$ORIGINAL_PAGE" | grep -E "\.com/[^/]*/sets/.+")"
 
 		[ $SINGLE_SONG ] || [ $PAGES_TOTAL = 1 ] && PAGES=$PAGE_NUM
 
@@ -207,9 +207,9 @@ case "$BASE_URL" in
 			fi
 			
 			if [ ! $SET ]; then
-				ARTISTS="$(HTMLTitleConvertFunction "$(echo "$SOURCE" | grep -o "user-name\">.*</a>" | sed -E 's|user-name\">(.*)</a>|\1|')")"
+				ARTISTS="$(HTMLTitleConvertFunction "$(echo "$SOURCE" | grep -o "username\":\"[^\"]*" | cut -d\" -f3)")"
 				SONG_TITLES="$(HTMLTitleConvertFunction "$(echo "$SOURCE" | grep -o "title\":.*\",\"commentable\"" | sed -e 's|title\":\"||;s|\",\"commentable\"||')")"
-				SONG_URLS="$(echo "$SOURCE" | grep -Eo "(http://media.soundcloud.com/stream/[^\"<]*|href=\"/[^/]*/[^/]*/\?size=medium\"|/[^\"<>]*/download)" | uniq | sed 's|href=\"|http://soundcloud.com|' | sed '/.*download$/{n;d;}')"
+				SONG_URLS="$(echo "$SOURCE" | grep -Eo "(http://media.soundcloud.com/stream/[^\"<]*|href=\"/[^/]*/[^/]*/\?size=medium\"|href=\"/[^/]*/[^/]*/download)" | uniq | sed 's|href=\"|http://soundcloud.com|' | sed '/.*download$/{n;d;}')"
 				STREAM_URLS="$(echo "$SOURCE" | grep -o "http://media.soundcloud.com/stream/[^\"<]*")"
 				ARTWORK_URLS="$(echo "$SOURCE" | grep -o "http://i1.sndcdn.com/artworks.*-crop\.jpg")"
 				DURATIONS="$(echo "$SOURCE" | grep -o "duration\":[[:digit:]]*" | cut -d: -f2 | sed 's|...$||')"
@@ -224,8 +224,8 @@ case "$BASE_URL" in
 				exit 1
 			fi
 
-			if [ "$SINGLE_SONG" ] && [ ! "$SET" ]; then
-				SONG_COUNT=1	
+			if [ "$SINGLE_SONG" ]; then
+				SONG_COUNT=1
 			else
 				SONG_COUNT=$(echo "$SONG_URLS" | wc -l)
 				ARTWORK_TITLES="$(HTMLTitleConvertFunction "$(echo "$SOURCE" | grep -o "[^>]*Artwork")")"
@@ -234,7 +234,7 @@ case "$BASE_URL" in
 			for (( SONG_ID=1, COMMENT_ID=1, ARTWORK_ID=1, THE_REST_ID=1; SONG_ID <= $SONG_COUNT; SONG_ID+=1 )); do
 				[ $TOTAL -eq $AMOUNT_TOTAL ] && exit 0
 				SONG_URL="$(echo "$SONG_URLS" | sed -n "$SONG_ID"p)"
-				
+
 				if [ "$(echo "$SONG_URL" | grep "\?stream_token=")" ]; then
 					if [ "$(echo "$SONG_URLS" | sed -n "$((SONG_ID + 1))"p | grep "/\?size=medium")" ]; then
 						SONG_URL="$(echo "$COMMENT_URLS" | sed -n "$COMMENT_ID"p | sed "s|/comments/|/?size=medium|")"
@@ -245,7 +245,7 @@ case "$BASE_URL" in
 				if [ "$(echo "$SONG_URL" | grep "/?size=medium")" ]; then
 					SET_SONG_PAGE_SOURCE="$(curl -A "Mozilla/5.0" -s --cookie ~/.scookie "$SONG_URL")"
 					ACTUAL_SONG_PAGE_PATH="$(echo "$SONG_URL" | sed 's|/?size=medium||;s|http://soundcloud.com||')"
-					ARTIST="$(HTMLTitleConvertFunction "$(echo "$SET_SONG_PAGE_SOURCE" | grep -o "user-name\">.*</a>" | sed -E 's|user-name\">(.*)</a>|\1|' | head -1)")"
+					ARTIST="$(HTMLTitleConvertFunction "$(echo "$SET_SONG_PAGE_SOURCE" | grep -o "username\":\"[^\"]*" | cut -d\" -f3 | head -1)")"
 					SONG_TITLE="$(HTMLTitleConvertFunction "$(echo "$SET_SONG_PAGE_SOURCE" | grep -o "title\":.*\",\"commentable\"" | sed 's|title\":\"||;s|\",\"commentable\"||' | head -1)")"
 					SONG_URL="$(echo "$SET_SONG_PAGE_SOURCE" | grep -Eo "(http://media.soundcloud.com/stream/[^\"<]*\?stream_token=.....|/[^\"]*/download)" | uniq | head -1)"
 					STREAM_URL="$(echo "$SET_SONG_PAGE_SOURCE" | grep -o "http://media.soundcloud.com/stream/[^\"<]*\?stream_token=[^\"<]*" | head -1)"
@@ -275,7 +275,6 @@ case "$BASE_URL" in
 				fi
 				
 				if [ "$(echo "$SONG_URL" | grep "/download")" ]; then
-					SONG_URL="$(echo "$SONG_URL" | grep "/download" | sed 's|^|http://soundcloud.com|')"
 					HQ=TRUE
 				else
 					HQ=FALSE
@@ -342,7 +341,7 @@ case "$BASE_URL" in
 						if [ $VERBOSE = TRUE ]; then
 							echo "------------------------------------------------------------------------"
 							echo "Page: http://soundcloud.com$ACTUAL_SONG_PAGE_PATH"
-							echo "Song: $SONG_URL"
+							echo "Song: $STREAM_URL"
 							[ -n "$ARTWORK_URL" ] && echo "Art:  $ARTWORK_URL"
 							echo "Time: $READABLE_DURATION"
 							COMMENTS="$(curl -s http://soundcloud.com"$ACTUAL_SONG_PAGE_PATH" | tr '\n' '|' | grep -o "class=\"time\">at|[^|]*|[^|]*|[^|]*</p></div>" | sed 's|class=\"time\">at\|||;s|</span>[^=]*=[^=]*=[^=]*=[^=]*=| |;s| [^,]*,.*>on \(...\)[^ ]*\(.*\)</abbr>.*<p>| \1\2: |;s|</p></div>||;s|<a href=\"\([^"]*\).*</a>|\1|;s|, *|, |;s|@: *||;s|\.|:|' | tr -d "'" | awk '{ if (length($0) > 28) print }' | awk '{ if (length($0) < 80) print }' | sort -n)"
