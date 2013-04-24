@@ -3,11 +3,10 @@ This is a zsh script that downloads soundcloud links that are provided by the us
 Setup
 -----
 
-sc is a shell script, so put it somewhere and make sure it is added to your `$PATH`. 
+sc is a shell script, so put it somewhere and make sure it is added to your `$PATH`. Don't forget to make it executable as well.
 
-If you're on OS X, sc is on homebrew:
-        
-        brew install sc
+		mkdir -p /usr/local/bin && chmod +x /path/to/script && mv !$ /usr/local/bin
+
 
 Examples
 --------
