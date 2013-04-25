@@ -5,7 +5,7 @@ Setup
 
 Put the script somewhere and make sure it is added to your `$PATH`. Don't forget to make it executable as well.
 
-		mkdir -p /usr/local/bin && chmod +x /path/to/script && mv !$ /usr/local/bin
+		mkdir -p /usr/local/bin && chmod +x /path/to/script && mv !$ /usr/local/bin && sc -h
 
 
 Examples
