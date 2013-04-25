@@ -1,9 +1,9 @@
-This is a zsh script that downloads soundcloud links that are provided by the user. There are a few options that can narrow down what you want to download, or even just print out the direct links.
+This is a zsh script that downloads http://soundcloud.com music from links that are provided by the user. There are a few options that can narrow down what you want to download, or even just print out the direct links.
 
 Setup
 -----
 
-sc is a shell script, so put it somewhere and make sure it is added to your `$PATH`. Don't forget to make it executable as well.
+Put the script somewhere and make sure it is added to your `$PATH`. Don't forget to make it executable as well.
 
 		mkdir -p /usr/local/bin && chmod +x /path/to/script && mv !$ /usr/local/bin
 
