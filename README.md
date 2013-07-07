@@ -1,3 +1,8 @@
+This branched version detects the proper filetype if not mp3 and still allows for limited mp3 tagging with non-mp3 files. It also converts .wav and .aif to .flac to save space.
+
+The only thing to fix is to add full tag support for the other formats. eye3D only supports mp3 in theory, so something like python-mutagen or libtag may be necessary.
+
+
 This is a zsh script that downloads http://soundcloud.com music from links that are provided by the user. There are a few options that can narrow down what you want to download, or even just print out the direct links.
 
 Setup
@@ -32,4 +37,4 @@ Examples
 
 Notes
 -----
-This script was inspired by the one at http://360percents.com. If you have any questions or comments, email me: scroggins.cade@gmail.com.
+Based on previous efforts of the script at http://360percents.com and cade scroggin's modification.
