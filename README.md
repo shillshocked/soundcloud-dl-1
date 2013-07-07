@@ -1,3 +1,5 @@
+(Currently not working due to a loop bug)
+
 This branched version detects the proper filetype if not mp3 and still allows for limited mp3 tagging with non-mp3 files. It also converts .wav and .aif to .flac to save space.
 
 The only thing to fix is to add full tag support for the other formats. eye3D only supports mp3 in theory, so something like python-mutagen or libtag may be necessary.
