@@ -116,6 +116,7 @@ SCRIPT_NAME="$(basename $0)"
 ORIGINAL_PAGE="$(echo "${(P)#}" | sed 's|https:|http:|')"
 BASE_URL="$(echo "$ORIGINAL_PAGE" | grep -Eo '^https*://w*\.*.*\.(net|com|org|cc|gov|edu|int|mil|br|ca|cn|fr|in|jp|ru)')"
 HAS_EYED3="$([ "$(which eyeD3)" = "eyeD3 not found" ] && printf "FALSE" || printf "TRUE")"
+HAS_FFMPEG="$([ "$(which ffmpeg)" = "ffmpeg not found" ] && printf "FALSE" || printf "TRUE")"
 PAGES_TOTAL=1000000
 SHOW_LINKS=FALSE
 DESTINATION="./"
@@ -334,7 +335,7 @@ case "$BASE_URL" in
 				fi
 				
 				if [ $SHOW_LINKS = FALSE ]; then
-					if [ -n "$SONG_URL" ] && [ ! -f "$DESTINATION$SONG_TITLE".mp3 ]; then
+					if [ -n "$SONG_URL" ] && [ ! -f "$DESTINATION$SONG_TITLE".$EXTENSION ]; then
 						NO_NEWLINE_NEEDED=FALSE
 						
 						echo -e "\n$SONG_TITLE $([ $HQ = TRUE ] && printf "(HQ)")"
@@ -354,28 +355,61 @@ case "$BASE_URL" in
 						
 						if [ "$(file "$DESTINATION$SONG_TITLE".part | grep "MPEG v4")" ]; then
 							EXTENSION=m4a
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "WAVE audio")" ]; then
+							EXTENSION=wav
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "Adaptive Multi-Rate")" ]; then
+							EXTENSION=amr
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "Microsoft ASF")" ]; then
+							EXTENSION=wma
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "AIFF")" ]; then
+							EXTENSION=aif
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "AIFF-C")" ]; then
+							EXTENSION=aifc
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "FLAC")" ]; then
+							EXTENSION=flac
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "Ogg")" ]; then
+							EXTENSION=ogg
+						elif [ "$(file "$DESTINATION$SONG_TITLE".part | grep "layer II,")" ]; then
+							EXTENSION=mp2
 						else
 							EXTENSION=mp3
 						fi
 						
 						mv "$DESTINATION$SONG_TITLE".part "$DESTINATION$SONG_TITLE".$EXTENSION
-						
-						if [ $HAS_EYED3 = TRUE ] && [ $EXTENSION = mp3 ] && [ -f "$DESTINATION$SONG_TITLE".$EXTENSION ]; then
-							if [ "$(echo "$SONG_URL" | grep "/download")" ]; then
-								eyeD3 --album="$ALBUM" --genre="" "$DESTINATION$SONG_TITLE".$EXTENSION &> /dev/null
+
+						if [ $EXTENSION = 'wav' ] || [ $EXTENSION = 'aif' ]; then
+							if [ $HAS_FFMPEG = FALSE ]; then
+								echo "Warning: $SCRIPT_NAME does not convert lossless audio to flac without ffmpeg installed: http://www.ffmpeg.org/"
+								headsUpFunction	
 							else
-								eyeD3 --artist="$ARTIST" --album="$ALBUM" --genre="" "$DESTINATION$SONG_TITLE".$EXTENSION &> /dev/null
+								ffmpeg -i "$DESTINATION$SONG_TITLE".$EXTENSION -c:a flac "$DESTINATION$SONG_TITLE".flac &> /dev/null
+								rm "$DESTINATION$SONG_TITLE".$EXTENSION
+								EXTENSION=flac
+							fi
+						fi
+						
+						if [ $HAS_EYED3 = TRUE ] && [ -f "$DESTINATION$SONG_TITLE".$EXTENSION ]; then
+							if [ EXTENSION <> mp3 ]; then					
+								mv "$DESTINATION$SONG_TITLE".$EXTENSION "$DESTINATION$SONG_TITLE".mp3							
+							fi
+							if [ "$(echo "$SONG_URL" | grep "/download")" ]; then
+								eyeD3 --album="$ALBUM" --genre="" "$DESTINATION$SONG_TITLE".mp3 &> /dev/null
+							else
+								eyeD3 --artist="$ARTIST" --album="$ALBUM" --genre="" "$DESTINATION$SONG_TITLE".mp3 &> /dev/null
 							fi
 							if [ -n "$ARTWORK_URL" ]; then
 								curl --cookie ~/.scookie --create-dirs -so /tmp/"$ARTWORK_TITLE".jpg "$ARTWORK_URL"
-								eyeD3 --remove-images "$DESTINATION$SONG_TITLE".$EXTENSION &> /dev/null
-								eyeD3 --add-image=/tmp/"$ARTWORK_TITLE".jpg:FRONT_COVER "$DESTINATION$SONG_TITLE".$EXTENSION &> /dev/null
+								eyeD3 --remove-images "$DESTINATION$SONG_TITLE".mp3 &> /dev/null
+								eyeD3 --add-image=/tmp/"$ARTWORK_TITLE".jpg:FRONT_COVER "$DESTINATION$SONG_TITLE".mp3 &> /dev/null
+							fi
+							if [ EXTENSION <> mp3 ]; then					
+								mv "$DESTINATION$SONG_TITLE".mp3 "$DESTINATION$SONG_TITLE".$EXTENSION
 							fi
 						fi
 					else
 						if [ $VERBOSE = TRUE ] && [ $SHOW_LINKS = FALSE ]; then
 							[ $NO_NEWLINE_NEEDED = FALSE ] && echo
-							echo "File exists: "$DESTINATION$SONG_TITLE".mp3"
+							echo "File exists: "$DESTINATION$SONG_TITLE".$EXTENSION"
 							NO_NEWLINE_NEEDED=TRUE
 						fi
 					fi
