@@ -1,8 +1,5 @@
 #!/bin/zsh
 
-# sc - Advanced soundcloud music downloading tool from http://thirdletter.com
-# Cade Scroggins (scroggins.cade@gmail.com)
-
 errorFunction() {
 	RESPONSES="invalid:bad:baseless:fallacious:false:ill-founded:illogical:inoperative:irrational:mad:notbinding:notworking:nugatory:null:nullandvoid:reasonless:sophistic:unreasonable:unreasoned:unscientific:unsound:untrue:void:wrong:absurdity:badjob:blunder:boner:boo-boo:delinquency:delusion:deviation:erratum:failure:fall:fallacy:falsehood:falsity:fault:fauxpas:flaw:glitch:goof:howler:inaccuracy:lapse:misapprehension:misbelief:miscalculation:misconception:miscue:misdeed:misjudgment:mismanagement:miss:misstep:misunderstanding:offense:omission:oversight:screamer:screw-up:sin:slight:slip:slipup:solecism:stumble:transgression:trespass:untruth:wrongdoing"
 	RESPONSE=$(echo "$RESPONSES" | cut -d: -f$(($RANDOM % 72 + 1)))
